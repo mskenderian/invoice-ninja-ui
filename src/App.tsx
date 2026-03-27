@@ -45,7 +45,7 @@ import { useWebSessionTimeout } from './common/hooks/useWebSessionTimeout';
 import { isPasswordRequiredAtom } from './common/atoms/password-confirmation';
 import { useSystemFonts } from './common/hooks/useSystemFonts';
 import { useReactSettings } from './common/hooks/useReactSettings';
-import { useKeyboardShortcuts } from './common/hooks/useKeyboardShortcuts';
+import { useGlobalShortcuts } from './common/hooks/keyboard-shortcuts';
 import { useCompanyTranslations } from './common/hooks/useCompanyTranslations';
 
 interface RefreshEntityData {
@@ -77,7 +77,7 @@ export function App() {
   const location = useLocation();
   const company = useCurrentCompany();
 
-  useKeyboardShortcuts();
+  useGlobalShortcuts();
   useWebSessionTimeout();
   useAddPreventNavigationEvents();
   useCompanyTranslations();

@@ -45,6 +45,7 @@ import classNames from 'classnames';
 import { Feedback } from '../Feedback';
 import { PriceIncreaseBanner } from '../banners/PriceIncrease';
 import { useNavigation } from './common/navigation';
+import { usePageShortcut } from '$app/common/hooks/keyboard-shortcuts';
 
 export interface SaveOption {
   label: string;
@@ -89,6 +90,15 @@ export function Default(props: Props) {
 
   const saveBtn = useAtomValue(saveBtnAtom);
   const navigationTopRightElement = useNavigationTopRightElement();
+
+  const saveCallback = saveBtn?.onClick || props.onSaveClick;
+  const isSaveDisabled =
+    saveBtn?.disableSaveButton || props.disableSaveButton;
+
+  usePageShortcut(
+    'save',
+    !isSaveDisabled && saveCallback ? saveCallback : null
+  );
 
   useSocketEvent<Invoice>({
     on: ['App\\Events\\Invoice\\InvoiceWasViewed'],

@@ -77,6 +77,7 @@ export interface ReactSettings {
   dark_mode?: boolean;
   color_theme?: ColorTheme;
   client_show_cards?: ClientShowCard[];
+  keyboard_shortcuts?: Record<string, string | null>;
 }
 
 export type ReactTableColumns =

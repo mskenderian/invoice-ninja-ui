@@ -13,6 +13,7 @@ import { Dropdown } from './dropdown/Dropdown';
 import { Button } from './forms';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from '$app/common/colors';
+import { usePageShortcut } from '$app/common/hooks/keyboard-shortcuts';
 
 export type Action<T = unknown> = (resource: T) => ReactNode;
 
@@ -39,6 +40,13 @@ export function ResourceActions(props: Props) {
     saveButtonLabel,
     disableSaveButtonOnly,
   } = props;
+
+  usePageShortcut(
+    'save',
+    onSaveClick && !disableSaveButton && !disableSaveButtonOnly
+      ? onSaveClick
+      : null
+  );
 
   return (
     <>
