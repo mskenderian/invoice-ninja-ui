@@ -73,10 +73,10 @@ Uses the existing preferences persistence pattern:
 
 ### API Details
 
-| Action | Method | URL | Body |
-|--------|--------|-----|------|
-| Load | `POST` | `/api/v1/login` | (part of login response) |
-| Save | `PUT` | `/api/v1/company_users/:id/preferences?include=company_user` | `{ react_settings: { keyboard_shortcuts: {...} } }` |
+| Action | Method | URL                                                          | Body                                                |
+| ------ | ------ | ------------------------------------------------------------ | --------------------------------------------------- |
+| Load   | `POST` | `/api/v1/login`                                              | (part of login response)                            |
+| Save   | `PUT`  | `/api/v1/company_users/:id/preferences?include=company_user` | `{ react_settings: { keyboard_shortcuts: {...} } }` |
 
 ### Expected Data Shape
 
@@ -110,24 +110,24 @@ Core definitions and helpers.
 - `ShortcutDefinition` — interface: `{ id, defaultCombo, label, scope }`
 - `DEFAULT_SHORTCUTS` — array of all shortcuts:
 
-| Action ID | Default Combo | Scope |
-|-----------|--------------|-------|
-| `save` | `Ctrl+S` | page |
-| `create:client` | `Ctrl+Shift+C` | global |
-| `create:product` | `Ctrl+Shift+K` | global |
-| `create:invoice` | `Ctrl+Shift+I` | global |
+| Action ID                  | Default Combo  | Scope  |
+| -------------------------- | -------------- | ------ |
+| `save`                     | `Ctrl+S`       | page   |
+| `create:client`            | `Ctrl+Shift+C` | global |
+| `create:product`           | `Ctrl+Shift+K` | global |
+| `create:invoice`           | `Ctrl+Shift+I` | global |
 | `create:recurring_invoice` | `Ctrl+Shift+R` | global |
-| `create:quote` | `Ctrl+Shift+Q` | global |
-| `create:payment` | `Ctrl+Shift+P` | global |
-| `create:expense` | `Ctrl+Shift+E` | global |
-| `create:purchase_order` | `Ctrl+Shift+O` | global |
-| `create:credit` | `Ctrl+Shift+D` | global |
-| `create:project` | `Ctrl+Shift+J` | global |
-| `create:task` | `Ctrl+Shift+T` | global |
-| `create:vendor` | `Ctrl+Shift+V` | global |
+| `create:quote`             | `Ctrl+Shift+Q` | global |
+| `create:payment`           | `Ctrl+Shift+P` | global |
+| `create:expense`           | `Ctrl+Shift+E` | global |
+| `create:purchase_order`    | `Ctrl+Shift+O` | global |
+| `create:credit`            | `Ctrl+Shift+D` | global |
+| `create:project`           | `Ctrl+Shift+J` | global |
+| `create:task`              | `Ctrl+Shift+T` | global |
+| `create:vendor`            | `Ctrl+Shift+V` | global |
 | `create:recurring_expense` | `Ctrl+Shift+X` | global |
-| `create:transaction` | `Ctrl+Shift+A` | global |
-| `create:docuninja` | `Ctrl+Shift+N` | global |
+| `create:transaction`       | `Ctrl+Shift+A` | global |
+| `create:docuninja`         | `Ctrl+Shift+N` | global |
 
 - `ACTION_ROUTES` — maps global action IDs to routes
 - `parseCombo(combo: string)` — converts `"Ctrl+Shift+C"` to `{ ctrlKey: true, shiftKey: true, altKey: false, metaKey: false, key: 'c' }`
@@ -254,3 +254,36 @@ Replaced by the new system.
 - Ctrl+Shift+I still navigates to `/invoices/create` (and all other existing shortcuts)
 - Browser's default save dialog is prevented
 - No regressions on existing shortcut behavior
+
+---
+
+## Known Concerns
+
+### Browser shortcut conflicts (pre-existing)
+
+These shortcuts were already overridden by the old `useKeyboardShortcuts.ts` and are carried forward:
+
+| Shortcut | Browser default | Our action |
+|----------|----------------|------------|
+| `Ctrl+Shift+T` | Reopen closed tab | Create task |
+| `Ctrl+Shift+I` | Open DevTools | Create invoice |
+| `Ctrl+Shift+N` | Incognito/private window | Create docuninja |
+
+These may frustrate power users who rely on the browser defaults. Once the Phase 2 settings UI is built, users can disable or rebind these.
+
+### Ctrl+S in text inputs
+
+When a user is typing in a text field or textarea and presses Ctrl+S, it will trigger save and prevent the browser default. This is generally the expected behavior for a web app (similar to Google Docs, Figma, etc.), but worth noting.
+
+### Save shortcut registration paths
+
+Ctrl+S is registered in two places to cover all pages:
+
+1. **`Default.tsx`** — covers create pages (which pass `onSaveClick` directly) and pages using `saveBtnAtom`
+2. **`ResourceActions.tsx`** — covers edit pages (which pass `onSaveClick` via `navigationTopRight`)
+
+These paths are **mutually exclusive** — a page uses one or the other, never both — so there is no risk of double-firing. The 6 pages using `saveBtnAtom` (invoice design, payments refund/apply, document settings) are handled by `Default.tsx` only.
+
+### No double registration risk
+
+Verified that no page combines `ResourceActions` with `saveBtnAtom` or direct `onSaveClick` on `Default`. The three save callback sources (`props.onSaveClick`, `saveBtnAtom`, `ResourceActions.onSaveClick`) are always used independently.
