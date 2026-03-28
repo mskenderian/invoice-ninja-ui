@@ -1,6 +1,6 @@
 import { createClient } from '$tests/e2e/client-helpers';
 import { checkTableEditability } from '$tests/e2e/helpers';
-import { Page } from '@playwright/test';
+import type { Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 
 interface CreateParams {

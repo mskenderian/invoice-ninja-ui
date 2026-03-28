@@ -9,7 +9,7 @@
  */
 
 import { configureStore } from '@reduxjs/toolkit';
-import { setupListeners } from '@reduxjs/toolkit/dist/query';
+import { setupListeners } from '@reduxjs/toolkit/query';
 import { companyDocumentSlice } from './slices/company-documents';
 import { productsSlice } from './slices/products';
 import { settingsSlice } from './slices/settings';

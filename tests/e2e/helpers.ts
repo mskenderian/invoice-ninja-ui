@@ -1,9 +1,25 @@
-import { Permissions as TPermissions } from '$app/common/hooks/permissions/useHasPermission';
-import { Page } from '@playwright/test';
+import type { Permissions as TPermissions } from '$app/common/hooks/permissions/useHasPermission';
+import type { Page } from '@playwright/test';
 import { expect } from '@playwright/test';
-import { Action } from './clients.spec';
 
 type AdminPermission = 'admin';
+
+export interface ModalAction {
+  label: string;
+  visible: boolean;
+}
+
+export interface Modal {
+  title: string;
+  actions: ModalAction[];
+  dataCyXButton: string;
+}
+
+export interface Action {
+  label: string;
+  visible: boolean;
+  modal?: Modal;
+}
 
 export type Permission = TPermissions | AdminPermission;
 

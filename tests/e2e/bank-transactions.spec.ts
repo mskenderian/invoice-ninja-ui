@@ -4,7 +4,8 @@ import {
   logout,
   permissions,
 } from '$tests/e2e/helpers';
-import test, { expect, Page } from '@playwright/test';
+import test, { expect } from '@playwright/test';
+import type { Page } from '@playwright/test';
 import { createExpenseCategory } from './expense-categories-helpers';
 import { createVendor } from './vendor-helpers';
 
